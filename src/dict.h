@@ -13,8 +13,8 @@ typedef struct _dict_entry_t {
 } dict_entry_t;
 
 typedef struct _dict_t {
-    int size;
-    int length;
+    unsigned int size;
+    unsigned int count;
     dict_entry_t **entries;
 } dict_t;
 
@@ -23,6 +23,7 @@ typedef struct _dict_t {
 dict_t *dict_create(unsigned int size);
 dict_entry_t *dict_get(dict_t *d, char *key);
 dict_entry_t *dict_add(dict_t *d, char *key, int val);
+dict_entry_t *dict_del(dict_t *d, char *key);
 
 
 #endif /* ifndef _DICT_H_ */

@@ -24,7 +24,7 @@ unsigned int _hash_str(const char *key, int size)
 /*
  * 创建一个给定大小的字典(哈希表).
  *
- * reture: 如果内存分配失败, 返回NULL, 否则返回指向新字典的指针.
+ * 如果内存分配失败, 返回NULL, 否则返回指向新字典的指针.
  */
 dict_t *dict_create(unsigned int size)
 {
@@ -35,7 +35,7 @@ dict_t *dict_create(unsigned int size)
     if ((d->entries = (dict_entry_t **)malloc(size * sizeof(dict_entry_t *))) == NULL)
         return NULL;
     d->size = size;
-    d->length = 0;
+    d->count = 0;
 
     return d;
 }
@@ -78,6 +78,30 @@ dict_entry_t *dict_add(dict_t *d, char *key, int val)
     hv = _hash_str(key, d->size);
     e->next = d->entries[hv];
     d->entries[hv] = e;
+    d->count++;
 
     return e;
+}
+
+/*
+ * 从字典中删除键值为key的实体.
+ *
+ * 如果key不存在返回NULL, 否则返回指向删除实体的指针.
+ */
+dict_entry_t *dict_del(dict_t *d, char *key)
+{
+    dict_entry_t **curr, *e;
+    unsigned int hv;
+
+    hv = _hash_str(key, d->size);
+    for (curr = d->entries + hv; *curr;) {
+        e = *curr;
+        if (e->key == key) {
+            *curr = e->next;
+            return e;
+        } else {
+            curr = &e->next;
+        }
+    }
+    return NULL;
 }
