@@ -1,5 +1,8 @@
-/* dict.c -  A simpe hash table implementation */
-
+/*-----------------------------------------------------------------------------
+ * dict.c -  A simpe hash table implementation
+ *
+ * Copyright © 2016 protream(protream.gihub.io)
+ *----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,11 +24,11 @@ unsigned int _hash_str(const char *key, int size)
 }
 
 
-/*
+/*-----------------------------------------------------------------------------
  * 创建一个给定大小的字典(哈希表).
  *
  * 如果内存分配失败, 返回NULL, 否则返回指向新字典的指针.
- */
+ *----------------------------------------------------------------------------*/
 dict_t *dict_create(unsigned int size)
 {
     dict_t *d;
@@ -41,12 +44,12 @@ dict_t *dict_create(unsigned int size)
 }
 
 
-/*
+/*-----------------------------------------------------------------------------
  * 从字典中查找指定的key.
  *
  * 如果该key存在, 返回指向键值对实体的指针, 否则返回NULL.
- */
-dict_entry_t *dict_get(dict_t *d, char *key)
+ *----------------------------------------------------------------------------*/
+dict_entry_t *dict_get(dict_t *d, const char *key)
 {
     dict_entry_t *e;
     unsigned int hv;
@@ -59,12 +62,12 @@ dict_entry_t *dict_get(dict_t *d, char *key)
     return e;
 }
 
-/*
+/*-----------------------------------------------------------------------------
  * 添加键值对到字典.
  *
  * 如果字典中存在key, 返回NULL, 否则返回指向该键值对实体的指针
- */
-dict_entry_t *dict_add(dict_t *d, char *key, int val)
+ *----------------------------------------------------------------------------*/
+dict_entry_t *dict_put(dict_t *d, const char *key, int val)
 {
     dict_entry_t *e;
     unsigned int hv;
@@ -83,12 +86,12 @@ dict_entry_t *dict_add(dict_t *d, char *key, int val)
     return e;
 }
 
-/*
+/*-----------------------------------------------------------------------------
  * 从字典中删除键值为key的实体.
  *
  * 如果key不存在返回NULL, 否则返回指向删除实体的指针.
- */
-dict_entry_t *dict_del(dict_t *d, char *key)
+ *----------------------------------------------------------------------------*/
+dict_entry_t *dict_del(dict_t *d, const char *key)
 {
     dict_entry_t **curr, *e;
     unsigned int hv;
@@ -104,4 +107,25 @@ dict_entry_t *dict_del(dict_t *d, char *key)
         }
     }
     return NULL;
+}
+
+void dict_free(dict_t *d)
+{
+    unsigned int size;
+    dict_entry_t *curr, *del;
+
+    for (size = d->size; size; size--) {
+        curr = *d->entries;
+        while (curr) {
+            del = curr;
+            curr = curr->next;
+            free(del);
+        }
+    }
+    free(d);
+}
+
+int main(int argc, char *argv[])
+{
+    return 0;
 }
