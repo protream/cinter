@@ -17,6 +17,7 @@ typedef struct stack {
 /* Functions implemented as macros */
 #define stackTop(s) ((s)->top)
 #define stackSize(s) ((s)->size)
+#define stackEmpty(s) ((s)->size == 0)
 
 #define stackSetFreeMethod(s, m) ((s)->free = (m))
 #define stackGetFreeMethod(s) ((s)->free)

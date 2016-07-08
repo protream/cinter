@@ -23,7 +23,7 @@ stack *stackPush(stack *stack, void *value)
     if ((node = (stackNode *)malloc(sizeof(stackNode))) == NULL)
         return NULL;
     node->value = value;
-    node->next = (stack->size == 0) ? NULL : stack->top;
+    node->next = stackEmpty(stack) ? NULL : stack->top;
     stack->top = node;
     stack->size++;
     return stack;
@@ -34,7 +34,7 @@ stackNode *stackPop(stack *stack)
     stackNode *node;
 
     node = stack->top;
-    if (stack->size != 0) {
+    if (!stackEmpty(stack)) {
         stack->top = node->next;
         stack->size--;
     }
@@ -61,7 +61,7 @@ void stackClear(stack *stack)
 
 void stackFree(stack *stack)
 {
-    if (stack->size != 0) stackClear(stack);
+    if (!stackEmpty(stack)) stackClear(stack);
     free(stack);
 }
 
