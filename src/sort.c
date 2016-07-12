@@ -1,4 +1,4 @@
-/* sort.c - Various sort algorigms implementation. */
+/* sort.c - Various sort algorigms implementation on int array. */
 #define TEST_SORT
 
 #include <stdio.h>
@@ -232,23 +232,23 @@ void countSort(int *A, int *B, int n, int k)
 /*------------------------- Bucket Sort -------------------------*/
 
 /* Special edition: every element has a bucket. */
-void bucketSortSpec(int *A, int *B, int n, int k)
+void bucketSortSpec(int *a, int n, int k)
 {
-    int i, j, *C;
+    int i, j, *count;
 
-     /* C: count array. */
-    if ((C = (int *)calloc(k + 1, sizeof(int))) == NULL) {
+     /* count: count array. */
+    if ((count = (int *)calloc(k + 1, sizeof(int))) == NULL) {
         printf("Memery allocation error.\n");
         exit(1);
     };
 
     for (i = 0; i < n; i++)
-        C[A[i]]++;
+        count[a[i]]++;
     for (i = j = 0; i <= k; i++) {
-        while (C[i]--)
-            B[j++] = i;
+        while (count[i]--)
+            a[j++] = i;
     }
-    free(C);
+    free(count);
 }
 
 typedef struct listNode {
@@ -368,10 +368,11 @@ int main(int argc, char *argv[])
     //quickSort(a, 10);
     //mergeSort(a, 10);
     //heapSort(a, 10);
-    /*countSort(a, ARR_SIZE, 9);*/
+    //countSort(a, ARR_SIZE, 9);
     /*int *b = (int *)calloc(ARR_SIZE, sizeof(int));*/
-    /*bucketSort(a, b, ARR_SIZE, 100);*/
-    radixSort(a, ARR_SIZE, 2);
+    bucketSortSpec(a, ARR_SIZE, ARR_SIZE);
+    //bucketSort(a, b, ARR_SIZE, 100);
+    //radixSort(a, ARR_SIZE, 2);
     for (i = 0; i < ARR_SIZE; ++i) {
         printf("%d ", a[i]);
     }

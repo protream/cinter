@@ -1,4 +1,4 @@
-/* sort.h - Various sort algorigms implementation. */
+/* sort.h - Various sort algorigms implementation on int array. */
 
 #ifndef __SORT_H
 #define __SORT_H
@@ -10,7 +10,7 @@ void quickSort(int *a, int n);
 void mergeSort(int *a, int n);
 void heapSort(int *a, int n);
 void countSort(int *A, int *B, int n, int k);
-void bucketSortSpec(int *A, int *B, int n, int k);
+void bucketSortSpec(int *a, int n, int k);
 void bucketSort(int *A, int *B, int n, int k);
 void radixSort(int *a, int n, int k);
 
