@@ -174,18 +174,38 @@ void mergeSort(int *a, int n)
 
 #define lchild(i) (2 * (i) + 1)
 
-static void maxHeapify(int *a, int i, int n)
+/* Recursion implementation.
+ *
+ * hs: heap size */
+void recMaxHeapify(int *a, int i, int n)
 {
-    int child, tmp;
+    int l, r, m;
 
-    for (tmp = a[i]; lchild(i) < n; i = child) {
-        child = lchild(i);
-        if (child != n - 1 && a[child + 1] > a[child]) {
-            child++;
-        }
-        if (tmp < a[child])
-            a[i] = a[child];
-        else
+    m = i;
+    l = lchild(i);
+    r = l + 1;
+    (void)((l < n) && (a[l] > a[m]) && (m = l));
+    (void)((r < n) && (a[r] > a[m]) && (m = r));
+    if (m != i) {
+        swap(a + i, a + m);
+        recMaxHeapify(a, m, n);
+    }
+}
+
+void maxHeapify(int *a, int i, int n)
+{
+    /* l: left child index.
+     * larger: the larger of left/right child's index. */
+    int l, larger, tmp;
+
+    tmp = a[i];
+    while ((larger = l = lchild(i)) < n) {
+        if (l < n - 1 && a[l] < a[l + 1])
+            larger++;
+        if (tmp < a[larger]) {
+            a[i] = a[larger];
+            i = larger;
+        } else
             break;
     }
     a[i] = tmp;
@@ -195,12 +215,16 @@ void heapSort(int *a, int n)
 {
     int i;
 
-    for (i = n / 2; i >= 0; i--) {
-        maxHeapify(a, i, n);
-    }
-    for (i = n - 1; i > 0; i--) {
+    /* build max heap */
+    for (i = (n - 1) / 2; i >= 0; i--)
+        maxHeapify(a, i, n - 1);
+        //recMaxHeapify(a, i, n - 1);
+
+    /* heap sort */
+    for (i = n - 1; i >= 1; i--) {
         swap(a, a + i);
         maxHeapify(a, 0, i);
+        //recMaxHeapify(a, 0, i);
     }
 
 }
@@ -308,6 +332,7 @@ void bucketSort(int *A, int *B, int n, int k)
 
 
 /*------------------------- Radix Sort -------------------------*/
+/* bucket sort */
 void bs(int *a, int n, int k)
 {
     int i, j, divisor;
@@ -350,32 +375,39 @@ void radixSort(int *a, int n, int k)
 #ifdef TEST_SORT
 #include <time.h>
 
-#define ARR_SIZE 100
+#define ARR_SIZE 10
 
 int main(int argc, char *argv[])
 {
     int i;
-    int a[ARR_SIZE];
+    //int a[ARR_SIZE];
 
-    srand(time(NULL));
+    //srand(time(NULL));
+    //for (i = 0; i < ARR_SIZE; ++i) {
+        //a[i] = rand() % ARR_SIZE;
+    //}
+
+    int a[] = {4, 1, 3, 2, 16, 9, 10, 14, 8, 7};
+
     for (i = 0; i < ARR_SIZE; ++i) {
-        a[i] = rand() % ARR_SIZE;
+        printf("%d ", a[i]);
     }
-
-    //bubbleSort(a, 10);
-    //insertSort(a, 10);
-    //selectSort(a, 10);
-    //quickSort(a, 10);
-    //mergeSort(a, 10);
-    //heapSort(a, 10);
+    printf("\n");
+    //bubbleSort(a, ARR_SIZE);
+    //insertSort(a, ARR_SIZE);
+    //selectSort(a, ARR_SIZE);
+    //quickSort(a, ARR_SIZE);
+    //mergeSort(a, ARR_SIZE);
+    heapSort(a, ARR_SIZE);
     //countSort(a, ARR_SIZE, 9);
-    /*int *b = (int *)calloc(ARR_SIZE, sizeof(int));*/
-    bucketSortSpec(a, ARR_SIZE, ARR_SIZE);
+    //int *b = (int *)calloc(ARR_SIZE, sizeof(int));
+    //bucketSortSpec(a, ARR_SIZE, ARR_SIZE);
     //bucketSort(a, b, ARR_SIZE, 100);
     //radixSort(a, ARR_SIZE, 2);
     for (i = 0; i < ARR_SIZE; ++i) {
         printf("%d ", a[i]);
     }
+    printf("\n");
     return 0;
 }
 #endif
