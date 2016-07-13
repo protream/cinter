@@ -87,7 +87,28 @@ void selectSort(int *a, int n)
 
 /*------------------------- Quick Sort -------------------------*/
 
-static void qSort(int *a, int lrange, int rrange)
+/* v1: from <<Introduction to Algorithms>>. */
+void quickRangeSort1(int *a, int lrange, int rrange)
+{
+    if (lrange < rrange) {
+        int i, j, pivot;
+
+        i = lrange;
+        pivot = a[lrange];
+        for (j = lrange + 1;  j <= rrange; j++) {
+            if (a[j] <= pivot) {
+                i++;
+                swap(a + i, a + j);
+            }
+        }
+        swap(a + lrange, a + i);
+        quickRangeSort1(a, lrange, i - 1);
+        quickRangeSort1(a, i + 1, rrange);
+    }
+}
+
+/* v2: without swap */
+void quickRangeSort2(int *a, int lrange, int rrange)
 {
     if (lrange < rrange) {
         int i, j, pivot;
@@ -106,14 +127,16 @@ static void qSort(int *a, int lrange, int rrange)
             if (i < j) a[j--] = a[i];
         }
         a[i] = pivot;
-        qSort(a, lrange, i - 1);
-        qSort(a, i + 1, rrange);
+        quickRangeSort2(a, lrange, i - 1);
+        quickRangeSort2(a, i + 1, rrange);
     }
 }
 
+/* Array a has n elements.*/
 void quickSort(int *a, int n)
 {
-   qSort(a, 0, n - 1);
+   quickRangeSort1(a, 0, n - 1);
+   //quickRangeSort2(a, 0, n - 1);
 }
 
 /*------------------------- Merge Sort -------------------------*/
@@ -396,9 +419,9 @@ int main(int argc, char *argv[])
     //bubbleSort(a, ARR_SIZE);
     //insertSort(a, ARR_SIZE);
     //selectSort(a, ARR_SIZE);
-    //quickSort(a, ARR_SIZE);
+    quickSort(a, ARR_SIZE);
     //mergeSort(a, ARR_SIZE);
-    heapSort(a, ARR_SIZE);
+    //heapSort(a, ARR_SIZE);
     //countSort(a, ARR_SIZE, 9);
     //int *b = (int *)calloc(ARR_SIZE, sizeof(int));
     //bucketSortSpec(a, ARR_SIZE, ARR_SIZE);
