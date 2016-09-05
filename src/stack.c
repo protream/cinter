@@ -1,35 +1,32 @@
-#define TEST_STACK
-
 #include <stdlib.h>
 #include "stack.h"
 
-
 stack *stackCreate(void)
 {
-    struct stack *stack;
+    struct stack *s;
 
-    if ((stack = (struct stack *)malloc(sizeof(struct stack))) == NULL)
+    if ((s = malloc(sizeof(*s))) == NULL)
         return NULL;
-    stack->top = NULL;
-    stack->free = NULL;
-    stack->size = 0;
-    return stack;
+    s->top = NULL;
+    s->free = NULL;
+    s->size = 0;
+    return s;
 }
 
-stack *stackPush(stack *stack, void *value)
+stack *stackPush(stack *s, void *value)
 {
-    stackNode *node;
+    stackNode *n;
 
-    if ((node = (stackNode *)malloc(sizeof(stackNode))) == NULL)
+    if ((n = malloc(sizeof(*n))) == NULL)
         return NULL;
-    node->value = value;
-    node->next = stackEmpty(stack) ? NULL : stack->top;
-    stack->top = node;
-    stack->size++;
-    return stack;
+    n->value = value;
+    n->next = stackEmpty(s) ? NULL : s->top;
+    s->top = n;
+    s->size++;
+    return s;
 }
 
-stackNode *stackPop(stack *stack)
+void *stackPop(stack *stack)
 {
     stackNode *node;
 
@@ -38,7 +35,7 @@ stackNode *stackPop(stack *stack)
         stack->top = node->next;
         stack->size--;
     }
-    return node;
+    return node->value;
 }
 
 void stackClear(stack *stack)
@@ -65,42 +62,50 @@ void stackFree(stack *stack)
     free(stack);
 }
 
-#ifdef TEST_STACK
-#include <stdio.h>
-#include <assert.h>
+#ifdef STACK_TEST
+#include "testhelper.h"
 
-int main(int argc, char *argv[])
+void stackTest(void)
 {
-    stack *stack;
-    stackNode *node;
+    stack *s;
+    stackNode *n;
 
-    stack = stackCreate();
-    assert(stack != NULL);
-    assert(stack->free == NULL);
-    assert(stack->size == 0);
+    TEST("Create a stack: ") {
+        s = stackCreate();
+        assert(s != NULL);
+        assert(s->free == NULL);
+        assert(s->size == 0);
+        ok();
+    }
 
-    int v1 = 123;
+    TEST("Push item: ") {
+        s = stackCreate();
+        int v1 = 123;
+        stackPush(s, &v1);
+        assert(s->size == 1);
+        assert(s->top->value == &v1);
+        char *v2 = "foo";
+        stackPush(s, v2);
+        assert(s->size == 2);
+        assert(s->top->value == v2);
+        ok();
+    }
 
-    stackPush(stack, &v1);
-    assert(stack->size == 1);
-    assert(stack->top->value == &v1);
-
-    char *v2 = "foo";
-
-    stackPush(stack, v2);
-    assert(stack->size == 2);
-    assert(stack->top->value == v2);
-
-    node = stackPop(stack);
-    assert(node->value == v2);
-    assert(stack->size == 1);
-
-    stackClear(stack);
-    assert(stack->size == 0);
-    assert(stack->top == NULL);
-
-    printf("Test stack OK!\n");
-
-    return 0;
+    TEST("Pop item: ") {
+        s = stackCreate();
+        int v1 = 123;
+        stackPush(s, &v1);
+        char *v2 = "foo";
+        stackPush(s, v2);
+        n = stackPop(s);
+        assert(n->value == v2);
+        ok();
+    }
 }
+
+#ifdef STACK_TEST_MAIN
+int main(void) {
+    stackTest();
+}
+#endif
 #endif

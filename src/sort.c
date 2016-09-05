@@ -19,25 +19,19 @@ static inline void swap(int *a, int *b)
 
 void bubbleSort(int *a, int n)
 {
-//    int i;
+    int i, j, flag = 1;
 
-//    while (n--) {
-//        for (i = 1; i <= n; i++)
-//           if (a[i - 1] > a[i]) swap(a + i - 1, a + i);
-//    }
+    for (j = n - 1; flag && j >= 1; j--) {
+        flag = 0;
+        for (i = 1; i <= j; i++) {
+            if (a[i - 1] > a[i]) {
+                swap(a+i-1, a+i);
+                flag = 1;
+            }
+        }
+    }
 
-//     int i, flag;
-//
-//     flag = 1;
-//     while (flag && n--) {
-//        flag = 0;
-//        for (i = 1; i <= n; i++)
-//           if (a[i - 1] > a[i]) {
-//               swap(a + i - 1, a + i);
-//               flag = 1;
-//           }
-//     }
-
+#if 0
     int i, j, flag;
 
     flag = n;
@@ -51,6 +45,7 @@ void bubbleSort(int *a, int n)
            }
         }
     }
+#endif
 }
 
 /*------------------------- Insert Sort -------------------------*/
@@ -63,10 +58,10 @@ void insertSort(int *a, int n)
         key = a[i];
         j = i - 1;
         while (j >= 0 && a[j] > key) {
-            a[j + 1] = a[j];
+            a[j+1] = a[j];
             j--;
         }
-        a[j + 1] = key;
+        a[j+1] = key;
     }
 }
 
@@ -74,14 +69,14 @@ void insertSort(int *a, int n)
 
 void selectSort(int *a, int n)
 {
-    int i, max;
+    int i, j, max;
 
-    while (n--) {
-        max = 0;
-        for (i = 1; i <= n; i++) {
+    for (j = n - 1;  j > 0; j--) {
+        for (max = 0, i = 1; i <= j; i++) {
             if (a[i] > a[max]) max = i;
         }
-        swap(a + n, a + max);
+        if (max != j)
+            swap(a+j, a+max);
     }
 }
 
@@ -396,41 +391,44 @@ void radixSort(int *a, int n, int k)
 }
 
 #ifdef TEST_SORT
-#include <time.h>
+#include "testhelper.h"
 
-#define ARR_SIZE 10
+void sortTest(void)
+{
+    int i;
+    int sorted[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    TEST("bubble sort: ") {
+        int tosort[] = {9, 2, 1, 0, 8, 3, 5, 7, 4, 6};
+
+        bubbleSort(tosort, 10);
+        for (i = 0; i < 10; i++)
+            assert(tosort[i] == sorted[i]);
+        ok();
+    }
+
+    TEST("insert sort: ") {
+        int tosort[] = {9, 2, 1, 0, 8, 3, 5, 7, 4, 6};
+
+        insertSort(tosort, 10);
+        for (i = 0; i < 10; i++)
+            assert(tosort[i] == sorted[i]);
+        ok();
+    }
+
+    TEST("select sort: ") {
+        int tosort[] = {9, 2, 1, 0, 8, 3, 5, 7, 4, 6};
+
+        selectSort(tosort, 10);
+        for (i = 0; i < 10; i++)
+            assert(tosort[i] == sorted[i]);
+        ok();
+    }
+}
 
 int main(int argc, char *argv[])
 {
-    int i;
-    //int a[ARR_SIZE];
-
-    //srand(time(NULL));
-    //for (i = 0; i < ARR_SIZE; ++i) {
-        //a[i] = rand() % ARR_SIZE;
-    //}
-
-    int a[] = {4, 1, 3, 2, 16, 9, 10, 14, 8, 7};
-
-    for (i = 0; i < ARR_SIZE; ++i) {
-        printf("%d ", a[i]);
-    }
-    printf("\n");
-    //bubbleSort(a, ARR_SIZE);
-    //insertSort(a, ARR_SIZE);
-    //selectSort(a, ARR_SIZE);
-    quickSort(a, ARR_SIZE);
-    //mergeSort(a, ARR_SIZE);
-    //heapSort(a, ARR_SIZE);
-    //countSort(a, ARR_SIZE, 9);
-    //int *b = (int *)calloc(ARR_SIZE, sizeof(int));
-    //bucketSortSpec(a, ARR_SIZE, ARR_SIZE);
-    //bucketSort(a, b, ARR_SIZE, 100);
-    //radixSort(a, ARR_SIZE, 2);
-    for (i = 0; i < ARR_SIZE; ++i) {
-        printf("%d ", a[i]);
-    }
-    printf("\n");
+    sortTest();
     return 0;
 }
 #endif

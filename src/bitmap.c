@@ -1,43 +1,41 @@
-#define TEST_BITMAP
 #include <stdlib.h>
 #include "bitmap.h"
 
 
-/* Create a bitmap with capacity.
- *
- * A bm with 16 capacity :
- *
- *  +--------+--------+
- *  |00000000|00000000|
- *  +--------+--------+
- *
- * This bm can holds flag of value 0~15. */
+// Create a bitmap with capacity.
+//
+// A bm with 16 capacity :
+//
+//  +--------+--------+
+//  |00000000|00000000|
+//  +--------+--------+
+//
+// This bm can holds flag of value 0~15.
 bitmap bmCreate(int capacity)
 {
     bitmap bm;
 
-    return ((bm = (bitmap)(calloc(capacity / BYTE, BYTE))) == NULL
+    return ((bm = calloc(capacity / BYTE, BYTE)) == NULL
         ? NULL
         : bm);
 }
 
-/* Put a value into the bm.
- *
- * Put 9 to the above bm:
- *
- *  +--------+--------+
- *  |00000000|01000000|
- *  +--------+--------+
- *
- * means set the flag of value 9 to 1. */
+// Put a value into the bm.
+//
+// Put 9 to the above bm:
+//
+//  +--------+--------+
+//  |00000000|01000000|
+//  +--------+--------+
+//
+// means set the flag of value 9 to 1.
 void bmPut(bitmap bm, int value)
 {
-    /* value & MASK <=> value % 8 */
+    // value & MASK <=> value % 8
     bm[value >> SHIFT] |= (1 << (value & MASK));
 }
 
-#include <stdio.h>
-/* Get the flag of value in the bm. */
+// Get the flag of value in the bm.
 int bmGet(bitmap bm, int value)
 {
     return bm[value >> SHIFT] & (1 << (value & MASK));
@@ -48,12 +46,10 @@ void bmFree(bitmap bm)
     free(bm);
 }
 
+#ifdef BITMAP_TEST
+#include "testhelper.h"
 
-#ifdef TEST_BITMAP
-#include <stdio.h>
-#include <assert.h>
-
-int main(int argc, char *argv[])
+void bitmapTest(void)
 {
     int i;
     bitmap bm;
@@ -69,6 +65,12 @@ int main(int argc, char *argv[])
     bmPut(bm, 13);
     bmPut(bm, 14);
 
+    assert(bmGet(bm, 0) == 1);
+    assert(bmGet(bm, 2) == 1);
+    assert(bmGet(bm, 5) == 1);
+    assert(bmGet(bm, 13) == 1);
+    assert(bmGet(bm, 14) == 1);
+
     for (i = 0; i < 16; ++i) {
         if (bmGet(bm, i)) {
             printf("%d\n", i);
@@ -76,7 +78,12 @@ int main(int argc, char *argv[])
     }
 
     bmFree(bm);
-
-    return 0;
+    printf("Test bitmap OK!\n");
 }
+
+#ifdef BITMAP_TEST_MAIN
+int main(void) {
+    bitmapTest();
+}
+#endif
 #endif
